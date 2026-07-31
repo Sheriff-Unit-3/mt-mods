@@ -7,7 +7,6 @@ on:
 jobs:
   format:
     runs-on: ubuntu-latest
-
     permissions:
       contents: write
 
@@ -16,7 +15,7 @@ jobs:
         uses: actions/checkout@main
         with:
           fetch-depth: 0
-          token: ${{ secrets.GITHUB_TOKEN }}
+          ref: ${{ github.head_ref }}
 
       - name: Run StyLua
         uses: JohnnyMorganz/stylua-action@main
@@ -30,11 +29,10 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
-          # Check if there are any formatting changes
           if [ -n "$(git status --porcelain)" ]; then
             git add .
             git commit -m "style: format Lua code with StyLua"
-            git push
+            git push origin HEAD:${{ github.head_ref }}
           else
             echo "No formatting changes."
           fi
